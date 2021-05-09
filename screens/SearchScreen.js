@@ -15,22 +15,33 @@ export default class Searchscreen extends React.Component {
       }
     }
 
+    //this function fetches more transactions from db when you have reached end of list of books displayed on your screen
     fetchMoreTransactions = async ()=>{
       var text = this.state.search.toUpperCase()
       var enteredText = text.split("")
-
+      //split() splits a string into different parts and stores the parts in an array
+      //enteredText will be an array which contains the letters of the text entered in search bar
       
-      if (enteredText[0].toUpperCase() ==='B'){
-      const query = await db.collection("transactions").where('bookId','==',text).startAfter(this.state.lastVisibleTransaction).limit(10).get()
-      query.docs.map((doc)=>{
-        this.setState({
-          allTransactions: [...this.state.allTransactions, doc.data()],
-          lastVisibleTransaction: doc
+      //if first letter of the text is B that means we searched a book id
+      if (enteredText[0].toUpperCase() ==='B'){   
+        const query = await db.collection("transactions").where('bookId','==',text).startAfter(this.state.lastVisibleTransaction).limit(10).get();
+          //where() is getting only those transactions where book id is same as text entered in search bar
+          //lastVisibleTransaction state will store the last document we got from db
+          //startAfter will start getting transactions from the db which are after the lastVisibleTransaction in the database
+          //documentation at https://firebase.google.com/docs/firestore/query-data/query-cursors
+
+        query.docs.map((doc)=>{
+           this.setState({
+              // ... will put or insert all elements of allTransactions array where ...this.state.allTransactions is written
+              //this will add doc.data() to allTransactions array after all the elements that were already in the array
+             allTransactions: [...this.state.allTransactions, doc.data()],
+             lastVisibleTransaction: doc
+           })
         })
-      })
-    }
+      }
+      //if first letter of the text is S that means we searched a student id
       else if(enteredText[0].toUpperCase() === 'S'){
-        const query = await db.collection("transactions").where('bookId','==',text).startAfter(this.state.lastVisibleTransaction).limit(10).get()
+        const query = await db.collection("transactions").where('studentId','==',text).startAfter(this.state.lastVisibleTransaction).limit(10).get()
         query.docs.map((doc)=>{
           this.setState({
             allTransactions: [...this.state.allTransactions, doc.data()],
