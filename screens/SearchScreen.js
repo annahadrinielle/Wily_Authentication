@@ -88,19 +88,45 @@ export default class Searchscreen extends React.Component {
     render() {
       return (
         <View style={styles.container}>
-          <View style={styles.searchBar}>
-        <TextInput 
-          style ={styles.bar}
-          placeholder = "Enter Book Id or Student Id"
-          onChangeText={(text)=>{this.setState({search:text})}}/>
-          <TouchableOpacity
-            style = {styles.searchButton}
-            onPress={()=>{this.searchTransactions(this.state.search)}}
-          >
-            <Text>Search</Text>
-          </TouchableOpacity>
-          </View>
-        <FlatList
+          
+         <View style={styles.searchBar}>
+           <TextInput 
+              style ={styles.bar}
+              placeholder = "Enter Book Id or Student Id"
+              onChangeText={(text)=>{this.setState({search:text})}}
+           />
+
+           <TouchableOpacity
+              style = {styles.searchButton}
+              onPress={()=>{this.searchTransactions(this.state.search)}}
+           > <Text>Search</Text>
+           </TouchableOpacity>
+         </View>
+         {/* 
+            We are using a FlatList component to display the transaction documents we got from the db 
+            when we searched for a book id or student id.
+            1. data is a prop of FlatList that tells what data the FlatList will display.
+            2. renderItem is a prop of FlatList that returns a component each an item of the FlatList will
+                be rendered in the form of that component 
+                (we are using a View component which has 4 texts:
+                    bookid
+                    studentid
+                    transaction type (issue/return)
+                    date of transaction ( timestamp value converted to date using toDate()
+                )
+            3. keyExtractor is a prop of FlatList that tells what should be the unique key for each item in FlatList
+                (for the key we are using index of the allTransactions array after converting it to string using toString()
+                because unique key needs to be a string but index is a number so we convert it to string)
+                
+            4. onEndReached is a prop of FlatList that will have a function which tells what to do when end of the FlatList is reached
+                (in onEndReached we have written a function that fetches more transactions from the db so that 
+                we can show them in our FlatList once user sees all the transactions that are there in the FlatList now)
+            
+            5. onEndReachedThreshold is a prop of FlatList that tells what part of the FlatList is reached by the user when 
+                onEndReached should be called (e.g. 0.5 means when half of the list is seen by the user, onEndReached should be called)
+            
+         */}
+         <FlatList
           data={this.state.allTransactions}
           renderItem={({item})=>(
             <View style={{borderBottomWidth: 2}}>
